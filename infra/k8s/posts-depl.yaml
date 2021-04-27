@@ -1,0 +1,31 @@
+apiVersion: apps/v1   #Here 'apps/v1' is the bucket of different objects 
+kind: Deployment
+metadata:
+  name: posts-depl    #Here 'posts-depl' is the name of the deployment
+spec:
+  replicas: 1        #'replicas' is the no. of pods that we want to create running some particular image
+  selector:          #Here the selector tells the deployment to select all the pods with a label 'app: posts'
+    matchLabels:
+      app: posts    
+  template:         #Here 'template' specifies the exact configuration of a pod that we want this deployment to create
+    metadata:
+      labels:
+        app: posts
+    spec:           #Here 'spec' defines the specification/configuration for the pod that we are going to deploy
+      containers:
+        - name: posts
+          image: vijayasanthipuli/posts:1.0.0 #Here if you dont specify 'latest' also fine by default kubernetes assumes latest  
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: posts-clusterip-srv
+spec:
+  selector:
+    app: posts
+  type: ClusterIP #Even if you dont mention 'type' here, kubernetes by default assume it as ClusterIP
+  ports:
+    - name: posts
+      protocol: TCP
+      port: 4000
+      targetPort: 4000 
